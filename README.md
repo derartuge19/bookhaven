@@ -2,8 +2,6 @@
 
 A modern, full-stack book e-commerce application built with React, TypeScript, Node.js, Express, and PostgreSQL. Browse, search, and purchase books using the Google Books API.
 
-![BookHaven](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## ✨ Features
 
@@ -52,7 +50,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/yourusername/BookHaven.git](https://github.com/yourusername/BookHaven.git)
+git clone [https://github.com/derartuge19/bookhaven.git](https://github.com/derartuge19/bookhaven)
 cd BookHaven
 
 
