@@ -53,7 +53,7 @@ const Checkout = () => {
             <Grid item xs={6} sm={3}>
               <FormControl fullWidth>
                 <InputLabel>State</InputLabel>
-                <Select name="state" label="State" required>
+                <Select name="state" label="State" required value={formData.state || ''} onChange={e => { const { name, value } = e.target as { name: string; value: string }; setFormData(prev => ({ ...prev, [name]: value })); }}>
                   <MenuItem value="CA">CA</MenuItem>
                   <MenuItem value="NY">NY</MenuItem>
                   <MenuItem value="TX">TX</MenuItem>
@@ -82,17 +82,17 @@ const Checkout = () => {
                 <Box flexGrow={1}>
                   <Typography>{item.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {item.quantity} × ${item.price.toFixed(2)}
+                    {item.quantity} × ${Number(item.price).toFixed(2)}
                   </Typography>
                 </Box>
-                <Typography>${(item.price * item.quantity).toFixed(2)}</Typography>
+                <Typography>${(Number(item.price) * item.quantity).toFixed(2)}</Typography>
               </Box>
             ))}
             <Divider sx={{ my: 2 }} />
             <Box textAlign="right">
-              <Typography>Subtotal: ${total.toFixed(2)}</Typography>
-              <Typography>Tax (10%): ${(total * 0.1).toFixed(2)}</Typography>
-              <Typography variant="h6">Total: ${(total * 1.1).toFixed(2)}</Typography>
+              <Typography>Subtotal: ${Number(total).toFixed(2)}</Typography>
+              <Typography>Tax (10%): ${(Number(total) * 0.1).toFixed(2)}</Typography>
+              <Typography variant="h6">Total: ${(Number(total) * 1.1).toFixed(2)}</Typography>
             </Box>
           </Box>
         );

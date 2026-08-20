@@ -1,15 +1,11 @@
 {
-  "name": "bookhaven",
+  "name": "bookhaven-frontend",
   "private": true,
   "version": "1.0.0",
   "description": "A full-stack book e-commerce application",
   "type": "module",
-  "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "client": "vite",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -130,6 +130,7 @@ export const searchBooks = async (query: string, maxResults = 4) => {
             q: query,
             maxResults,
             orderBy: 'newest',
+            country: 'US',
           },
         })
       );

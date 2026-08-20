@@ -80,7 +80,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
       
-      if (response.data && response.data.success) {
+      if (response.data && response.data.items) {
         setItems(response.data.items || []);
         setTotal(response.data.total || 0);
       } else {

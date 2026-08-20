@@ -81,6 +81,7 @@ const BookDetails: React.FC = () => {
         setError(null);
         
         const response = await googleBooksApi.get(`/volumes/${id}`, {
+          params: { country: 'US' },
           timeout: 10000 // 10 second timeout
         });
         
@@ -115,10 +116,16 @@ const BookDetails: React.FC = () => {
   
     try {
       setIsAddingToCart(true);
-      // Use listPrice if available, otherwise use retailPrice, default to 0 if neither exists
-      const price = book.saleInfo?.listPrice?.amount || 
-                   book.saleInfo?.retailPrice?.amount || 
+      // Use retailPrice if available, otherwise use listPrice, default to 0 if neither exists
+      const price = book.saleInfo?.retailPrice?.amount || 
+                   book.saleInfo?.listPrice?.amount || 
                    0;
+      
+      if (book.saleInfo?.saleability !== 'FOR_SALE' || price === 0) {
+        toast.error('This book is not available for purchase');
+        setIsAddingToCart(false);
+        return;
+      }
       
       await addToCart({
         bookId: book.id,
@@ -173,7 +180,6 @@ const BookDetails: React.FC = () => {
   const { volumeInfo, saleInfo } = book;
   const coverImage = volumeInfo.imageLinks?.thumbnail || volumeInfo.imageLinks?.medium || 
                     volumeInfo.imageLinks?.large || '/book-placeholder.png';
-  const price = saleInfo?.listPrice || saleInfo?.retailPrice;
   const publishedYear = volumeInfo.publishedDate ? new Date(volumeInfo.publishedDate).getFullYear() : null;
 
   return (
@@ -205,52 +211,7 @@ const BookDetails: React.FC = () => {
               }}
             />
             
-            // In BookDetails.tsx, find the button group section and update it to include the Add to Cart button
 <Box sx={{ mt: 3, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-  {price && (
-    <>
-      <Button 
-  variant="contained" 
-  color="primary"
-  startIcon={<ShoppingCart />}
-  onClick={handleAddToCart}
-  disabled={isAddingToCart}
-  sx={{ 
-    flex: 1, 
-    minWidth: '200px',
-    backgroundColor: isAddingToCart ? 'grey.400' : 'primary.main',
-    '&:hover': {
-      backgroundColor: isAddingToCart ? 'grey.400' : 'primary.dark',
-    }
-  }}
->
-  {isAddingToCart ? 'Adding...' : 'Add to Cart'}
-</Button>
-<Button 
-  variant="contained" 
-  color="primary"
-  startIcon={<ShoppingCart />}
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('Add to Cart clicked');
-    handleAddToCart();
-  }}
-  disabled={isAddingToCart}
-  sx={{ 
-    flex: 1, 
-    minWidth: '200px',
-    pointerEvents: 'auto',
-    zIndex: 1,
-    '&:hover': {
-      backgroundColor: 'primary.dark',
-    }
-  }}
->
-  {isAddingToCart ? 'Adding...' : 'Add to Cart'}
-</Button>
-    </>
-  )}
   
   <Button 
     variant="outlined"
@@ -419,23 +380,12 @@ const BookDetails: React.FC = () => {
                 color="primary"
                 startIcon={<ShoppingCart />}
                 onClick={handleAddToCart}
-                disabled={isAddingToCart || !saleInfo?.buyLink}
+                disabled={isAddingToCart || saleInfo?.saleability !== 'FOR_SALE'}
                 sx={{ minWidth: 200 }}
               >
                 {isAddingToCart ? 'Added to Cart!' : 'Add to Cart'}
               </Button>
               
-              {saleInfo?.buyLink && (
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  href={saleInfo.buyLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Buy Now
-                </Button>
-              )}
               
               <Button
                 variant="outlined"

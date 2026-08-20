@@ -27,7 +27,7 @@ import { Search as SearchIcon, AddShoppingCart as AddShoppingCartIcon } from '@m
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../contexts/CartContext';
-import { googleBooksApi } from '../services/googleBooks';
+import { fetchBooksWithRetry } from '../services/googleBooks';
 
 // Replace with your Google Books API key
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
@@ -74,7 +74,7 @@ const Books = () => {
   const [category, setCategory] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
   const [filter, setFilter] = useState('');
-  const [showOnlyForSale, setShowOnlyForSale] = useState(false);
+  const [showOnlyForSale, setShowOnlyForSale] = useState(true);
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
@@ -137,7 +137,8 @@ const fetchBooks = async () => {
       maxResults: 10,
       orderBy: sortBy === 'newest' ? 'newest' : 'relevance',
       printType: 'books',
-      langRestrict: 'en'
+      langRestrict: 'en',
+      country: 'US'
     };
 
     // Apply the "Available for Sale" filter
@@ -147,13 +148,9 @@ const fetchBooks = async () => {
       params.filter = filter;
     }
     
-    const response = await googleBooksApi.get('/volumes', {
-      params,
-      timeout: 10000
-    });
+    const data = await fetchBooksWithRetry(params);
     
-    // Replace lines 154-156
-if (!response.data?.items || response.data.items.length === 0) {
+    if (!data?.items || data.items.length === 0) {
   // No books found - set empty array and stop
   setBooks(page === 0 ? [] : books);
   setHasMore(false);
@@ -161,7 +158,7 @@ if (!response.data?.items || response.data.items.length === 0) {
   return;
 }
     
-    const newBooks = response.data.items.map((item: any) => ({
+    const newBooks = data.items.map((item: any) => ({
       id: item.id,
       volumeInfo: {
         title: item.volumeInfo?.title || 'Untitled',
@@ -199,7 +196,7 @@ if (!response.data?.items || response.data.items.length === 0) {
 };
     const timer = setTimeout(() => {
       fetchBooks();
-    }, 500);
+    }, 800);
     
     return () => clearTimeout(timer);
   }, [searchTerm, page, sortBy, category, filter, showOnlyForSale]);
@@ -220,16 +217,17 @@ if (!response.data?.items || response.data.items.length === 0) {
 
   const handleAddToCart = (book: Book) => {
     const saleInfo = book.saleInfo || {};
-    const price = saleInfo.retailPrice?.amount || 0;
-    const currencyCode = saleInfo.retailPrice?.currencyCode || 'USD';
+    const price = saleInfo.retailPrice?.amount ?? saleInfo.listPrice?.amount ?? 0;
+    const currencyCode = saleInfo.retailPrice?.currencyCode ?? saleInfo.listPrice?.currencyCode ?? 'USD';
     
     console.log('Adding to cart - Book ID:', book.id);
     console.log('Saleability:', saleInfo.saleability);
     console.log('Retail price:', saleInfo.retailPrice);
+    console.log('List price:', saleInfo.listPrice);
     console.log('Final price:', price, currencyCode);
     
     // Check if the book is available for sale
-    if (saleInfo.saleability !== 'FOR_SALE' || !saleInfo.retailPrice) {
+    if (saleInfo.saleability !== 'FOR_SALE' || (!saleInfo.retailPrice?.amount && !saleInfo.listPrice?.amount)) {
       console.log('This book is not available for purchase');
       return;
     }
@@ -363,7 +361,7 @@ if (!response.data?.items || response.data.items.length === 0) {
   
   {/* Availability Badge */}
   <Box sx={{ mt: 1, mb: 1 }}>
-    {book.saleInfo?.saleability === 'FOR_SALE' && book.saleInfo?.retailPrice ? (
+    {book.saleInfo?.saleability === 'FOR_SALE' && (book.saleInfo?.retailPrice?.amount || book.saleInfo?.listPrice?.amount) ? (
       <Chip 
         label="Available for Sale" 
         color="success" 

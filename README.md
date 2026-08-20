@@ -2,6 +2,17 @@
 
 A modern, full-stack book e-commerce application built with React, TypeScript, Node.js, Express, and PostgreSQL. Browse, search, and purchase books using the Google Books API.
 
+## 📁 Project Structure
+
+```
+BookHaven/
+├── backend/      # Express + PostgreSQL API
+├── frontend/     # Vite + React + TypeScript client
+├── .env          # Shared environment variables (backend + Vite)
+├── .gitignore
+└── README.md
+```
+
 ![BookHaven](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -57,16 +68,18 @@ cd BookHaven
 
 
 2. Install Dependencies
-# Install all dependencies (frontend + backend)
-npm install
+# Install frontend dependencies
+npm install --prefix frontend
+
+# Install backend dependencies
+npm install --prefix backend
 
 3. Set Up PostgreSQL Database
 CREATE DATABASE bookhaven;
 
 4. Configure Environment Variables
-cp .env.example .env
 
-Edit the .env file with your configuration:
+The `.env` file stays at the project root and is shared by both the backend and the Vite frontend (via `envDir: '..'`)`. Update it with your configuration:
 # Server Configuration
 PORT=5000
 NODE_ENV=development

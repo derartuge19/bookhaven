@@ -106,5 +106,12 @@ module.exports = (sequelize) => {
     }
   );
 
+  User.associate = (models) => {
+    User.hasOne(models.Cart, {
+      as: 'cart',
+      foreignKey: 'userId',
+    });
+  };
+
   return User;
 };

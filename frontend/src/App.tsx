@@ -11,6 +11,8 @@ import Home from './pages/Home';
 import Books from './pages/Books';
 import BookDetails from './pages/BookDetails';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import OrderConfirmation from './pages/OrderConfirmation';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -197,6 +199,8 @@ function App() {
                   <Route path="/books" element={<Books />} />
                   <Route path="/books/:id" element={<BookDetails />} />
                   <Route path="/cart" element={<Cart />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/order-confirmation" element={<OrderConfirmation />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/profile" element={<Profile />} />
