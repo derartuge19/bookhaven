@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../services/api'; 
+import axios from 'axios'; 
 
 interface User {
   id: number;
@@ -39,8 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 useEffect(() => {
   const token = localStorage.getItem('token');
   if (token) {
-    // Only set auth header for your backend API
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    // Set auth header for global axios used by fetchUser
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     fetchUser();
   } else {
     setLoading(false);
@@ -66,7 +65,8 @@ useEffect(() => {
         password,
       });
 
-      const { token, user } = response.data;
+      const token = response.data.token || response.data.accessToken;
+      const { user } = response.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
@@ -114,7 +114,8 @@ useEffect(() => {
         throw new Error(errorMessage);
       }
     
-      const { token, user } = response.data;
+      const token = response.data.token || response.data.accessToken;
+      const { user } = response.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
