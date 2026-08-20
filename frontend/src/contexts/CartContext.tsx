@@ -128,7 +128,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isAuthenticated) return;
 
     try {
-      await axios.delete('/api/cart');
+      await axios.delete('/api/cart/clear');
       setItems([]);
       setTotal(0);
     } catch (err) {

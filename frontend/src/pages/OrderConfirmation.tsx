@@ -55,7 +55,7 @@ const OrderConfirmation = () => {
   if (!state) return null;
 
   const { orderNumber, items, total, shippingAddress } = state;
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = items.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
   const tax = total - subtotal;
 
   return (
@@ -116,13 +116,13 @@ const OrderConfirmation = () => {
                       </Box>
                     </TableCell>
                     <TableCell align="right">
-                      ${item.price.toFixed(2)}
+                      ${Number(item.price).toFixed(2)}
                     </TableCell>
                     <TableCell align="center">
                       {item.quantity}
                     </TableCell>
                     <TableCell align="right">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ${(Number(item.price) * item.quantity).toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -131,10 +131,10 @@ const OrderConfirmation = () => {
           </TableContainer>
           
           <Box sx={{ mt: 2, textAlign: 'right' }}>
-            <Typography>Subtotal: ${subtotal.toFixed(2)}</Typography>
-            <Typography>Tax: ${tax.toFixed(2)}</Typography>
+            <Typography>Subtotal: ${Number(subtotal).toFixed(2)}</Typography>
+            <Typography>Tax: ${Number(tax).toFixed(2)}</Typography>
             <Typography variant="h6" sx={{ mt: 1, fontWeight: 'bold' }}>
-              Order Total: ${total.toFixed(2)}
+              Order Total: ${Number(total).toFixed(2)}
             </Typography>
           </Box>
           
