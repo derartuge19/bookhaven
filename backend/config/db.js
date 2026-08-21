@@ -12,7 +12,7 @@ console.log('DB Configuration:', {
   DB_PORT: process.env.DB_PORT || '5432'
 });
 
-// Ensure environment variables are loaded
+// Ensure environment variables are loaded.....
 if (!process.env.DB_NAME || !process.env.DB_USER || !process.env.DB_PASSWORD) {
   console.error('Missing required database configuration in .env file');
   console.error('Current working directory:', process.cwd());
@@ -38,7 +38,7 @@ const sequelize = new Sequelize({
   }
 });
 
-// Test the database connection
+// Test the database connection....
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
