@@ -4,7 +4,7 @@ const { body, param } = require('express-validator');
 const cartController = require('../controllers/cartController');
 const { auth } = require('../middleware/auth');
 
-// Apply auth middleware to all routes
+// Apply auth middleware to all routes 
 router.use(auth);
 
 // @route   GET /api/cart
